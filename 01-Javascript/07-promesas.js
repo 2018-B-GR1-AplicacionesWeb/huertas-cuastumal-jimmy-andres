@@ -49,30 +49,33 @@ nuevaPromesaLectura
         }
     );
 
-const PromesaAppendFileLectura= new Promise(
-    (resolve, reject) => {
-        fs.readFile(nombreArchivo,'utf-8',
-            (err, contenidoArchivo)=>{
-                if (err) {
-                    resolve('');
-                } else {
-                    resolve(contenidoArchivo);
-                }
-            });
-    }
-);
-const PromesaAppendFIleEscritura = (contenidoLeido) => {
-    return new Promise(
+
+function appendFile(nombreArchivo, contenidoArchivo) {
+    const PromesaAppendFileLectura = new Promise(
         (resolve, reject) => {
-            const  contenido = contenidoLeido ? contenidoLeido;
-            fs.writeFile(nombreArchivo, contenido,
-                (err,) => {
+            fs.readFile(nombreArchivo, 'utf-8',
+                (err, contenidoArchivo) => {
                     if (err) {
-                        reject(err);
+                        resolve('');
                     } else {
-                        resolve(contenido);
+                        resolve(contenidoArchivo);
                     }
                 });
         }
     );
-};
+    const PromesaAppendFIleEscritura = (contenidoLeido) => {
+        return new Promise(
+            (resolve, reject) => {
+                const contenido = contenidoLeido ? contenidoLeido;
+                fs.writeFile(nombreArchivo, contenido,
+                    (err,) => {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            resolve(contenido);
+                        }
+                    });
+            }
+        );
+    };
+}
