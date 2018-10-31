@@ -1,5 +1,5 @@
 const fs = require('fs');
-
+/*
 const nuevaPromesaLectura = new Promise(
     (resolve, reject) => {
             fs.readFile('06-texto23.txt','utf-8',
@@ -57,6 +57,7 @@ function appendFile(nombreArchivo, contenidoArchivo) {
                 (err, contenidoArchivo) => {
                     if (err) {
                         resolve('');
+                        console.log('error');
                     } else {
                         resolve(contenidoArchivo);
                     }
@@ -66,7 +67,7 @@ function appendFile(nombreArchivo, contenidoArchivo) {
     const PromesaAppendFIleEscritura = (contenidoLeido) => {
         return new Promise(
             (resolve, reject) => {
-                const contenido = contenidoLeido ? contenidoLeido;
+                const contenido = contenidoLeido ? contenidoLeido:
                 fs.writeFile(nombreArchivo, contenido,
                     (err,) => {
                         if (err) {
@@ -79,3 +80,51 @@ function appendFile(nombreArchivo, contenidoArchivo) {
         );
     };
 }
+
+appendFile('07-Promesas.txt', 'Hola');*/
+
+const promesaEjercicioArchivos = (indice, string) => {  //Promesa para escritura
+    return new Promise(
+        (resolve, reject) => {
+            const archivo = `${indice}-${string}.txt`;
+            const contenido = string;
+            fs.writeFile(archivo,
+                contenido,
+                (err) => {
+                    if(err) {
+                        reject(err);
+                    } else {
+                        const respuesta = {
+                            nombreArchivo: archivo,
+                            contenidoArchivo: contenido,
+                            error: err
+                        };
+
+                        resolve(respuesta);
+                    }
+                })
+        }
+    )
+};
+const arregloStrings = ['E', 'F', 'G'];
+const arregloResultados = [];
+
+arregloStrings.forEach(
+    (string, index) => {
+        promesaEjercicioArchivos(index, string)
+            .then(
+                (respuesta) => {
+
+                    arregloResultados.push(respuesta);
+                    console.log(arregloResultados);
+                }
+            )
+            .catch(
+                (error) => {
+                    console.log('Error', error);
+                }
+            );
+    }
+);
+
+console.log(arregloStrings);
