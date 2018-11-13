@@ -2,30 +2,55 @@
 //import * as inquirer from 'inquirer';
 exports.__esModule = true;
 var inquirer = require('inquirer');
+var fs = require('fs');
 exports.libros = [];
-/*
-function agregarLibro(
-    titulo: string,
-    autor: string,
-    genero: string,
-) {
-    const libro: libroInterface = {
-        titulo: titulo,
-        autor: autor,
-        genero: genero
-    };
-    libros.push(libro);
-}
-
-agregarLibro('Odisea', 'Homero', 'Drama');
-agregarLibro('Iliada', 'Homero', 'Drama');
-console.log(libros);*/
-exports.agregar = function (arreglosLibros, libroNuevo) {
+var libroEjemplo = {
+    titulo: 'libropueba',
+    autor: 'aninimo',
+    genero: 'comedia'
+};
+exports.lecturaArchivoLibros = new Promise(function (resolve, reject) {
+    fs.readFile('libros.json', 'utf-8', function (err, contenidoArchivo) {
+        if (err) {
+            resolve('');
+        }
+        else {
+            resolve(contenidoArchivo);
+        }
+    });
+});
+var escrituraArchivoLibros = function (contenidoLeido, datosLibro) {
+    return new Promise(function (resolve, reject) {
+        var contenido = contenidoLeido ? contenidoLeido + datosLibro : datosLibro;
+        fs.writeFile('libros.json', contenido, function (err) {
+            if (err) {
+                reject(err);
+            }
+            else {
+                resolve(contenido);
+            }
+        });
+    });
+};
+exports.agregarLibro = function (arreglosLibros, libroNuevo) {
     arreglosLibros.push(libroNuevo);
     return new Promise(function (resolve, reject) {
-        resolve(console.log(exports.libros));
-        reject({
-            mensaje: 'NO SE CREO JUEGO'
+        var archivo = 'libros.json';
+        var datosLibro = '\n' + JSON.stringify(libroNuevo);
+        exports.lecturaArchivoLibros
+            .then(function (contenidoArchivo) {
+            return escrituraArchivoLibros(contenidoArchivo, datosLibro);
+        })
+            .then(function (contenidoActualizado) {
+            console.log('Contenido completo: \n', contenidoActualizado);
+        });
+    });
+};
+exports.listarLibros = function () {
+    return new Promise(function (resolve, reject) {
+        exports.lecturaArchivoLibros
+            .then(function (contenidoArchivo) {
+            console.log('\n*****Libros*****\n', contenidoArchivo);
         });
     });
 };

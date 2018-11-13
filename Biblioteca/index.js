@@ -8,11 +8,11 @@ function start() {
         .prompt([
         {
             type: 'list', name: 'Menu', message: 'Seleccione una opcion',
-            choices: ['Agregar libro', 'Eliminar libros', 'Prestamo libro', 'Salir']
+            choices: ['Agregar libro', 'Listar libros', 'Prestamo libro', 'Salir']
         }
     ])
         .then(function (opcionMenu) {
-        console.log(opcionMenu.Menu);
+        //console.log(opcionMenu.Menu);
         switch (opcionMenu.Menu) {
             case 'Agregar libro':
                 console.log('1');
@@ -33,13 +33,13 @@ function start() {
                         autor: respuestasNuevoLibro.Autor,
                         genero: respuestasNuevoLibro.Genero
                     };
-                    biblioteca_1.agregar(biblioteca_1.libros, libroNuevo);
+                    biblioteca_1.agregarLibro(biblioteca_1.libros, libroNuevo);
                     console.log('Libro ingresado con exito.!');
                     start();
                 });
                 break;
-            case 'Eliminar libros':
-                console.log('3');
+            case 'Listar libros':
+                biblioteca_1.listarLibros();
                 break;
             case 'Prestamo libro':
                 console.log('4');

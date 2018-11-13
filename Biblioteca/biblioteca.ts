@@ -4,6 +4,8 @@
 
 declare var require;
 const inquirer = require('inquirer');
+const fs = require('fs');
+
 declare var Promise:any;
 
 export const libros: any = [];
@@ -13,34 +15,73 @@ export interface libroInterface {
     autor: string;
     genero: string;
 }
-/*
-function agregarLibro(
-    titulo: string,
-    autor: string,
-    genero: string,
-) {
-    const libro: libroInterface = {
-        titulo: titulo,
-        autor: autor,
-        genero: genero
-    };
-    libros.push(libro);
-}
 
-agregarLibro('Odisea', 'Homero', 'Drama');
-agregarLibro('Iliada', 'Homero', 'Drama');
-console.log(libros);*/
+const libroEjemplo: libroInterface = {
+    titulo:'libropueba',
+    autor:'aninimo',
+    genero:'comedia'
+};
 
-export const agregar = (arreglosLibros, libroNuevo) =>{
+
+export const lecturaArchivoLibros = new Promise(
+    (resolve, reject) => {
+        fs.readFile('libros.json','utf-8',
+            (err, contenidoArchivo)=>{
+                if (err) {
+                    resolve('');
+                } else {
+                    resolve(contenidoArchivo);
+                }
+            });
+    }
+);
+
+const escrituraArchivoLibros = (contenidoLeido:string, datosLibro:string) => {
+    return new Promise(
+        (resolve, reject) => {
+            const  contenido = contenidoLeido ? contenidoLeido + datosLibro: datosLibro;
+            fs.writeFile('libros.json', contenido,
+                (err,) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(contenido);
+                    }
+                });
+        }
+    );
+};
+
+export const agregarLibro = (arreglosLibros, libroNuevo) =>{
     arreglosLibros.push(libroNuevo);
     return new Promise(
         (resolve, reject) => {
-            resolve(
-                console.log(libros)
-            );
-            reject({
-                mensaje: 'NO SE CREO JUEGO'
-            });
+            const archivo:string = 'libros.json';
+            const datosLibro:string = '\n' + JSON.stringify(libroNuevo);
+            lecturaArchivoLibros
+                .then(
+                    (contenidoArchivo)=>{
+                        return escrituraArchivoLibros(contenidoArchivo,datosLibro);
+                    }
+                )
+                .then(
+                    (contenidoActualizado)=>{
+                        console.log('Contenido completo: \n', contenidoActualizado);
+                    }
+                )
+        }
+    )
+};
+
+export const listarLibros = () =>{
+    return new Promise(
+        (resolve, reject) => {
+            lecturaArchivoLibros
+                .then(
+                    (contenidoArchivo)=>{
+                        console.log('\n*****Libros*****\n', contenidoArchivo);
+                    }
+                )
         }
     )
 };

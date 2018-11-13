@@ -1,6 +1,6 @@
 //import {agregarLibro, libros} from "./biblioteca";
 
-import {agregar, libroInterface, libros} from "./biblioteca";
+import {agregarLibro, lecturaArchivoLibros, libroInterface, libros, listarLibros} from "./biblioteca";
 
 declare var require;
 const inquirer = require('inquirer');
@@ -10,7 +10,7 @@ function start() {
         .prompt([
             {
                 type: 'list', name: 'Menu', message: 'Seleccione una opcion',
-                choices: ['Agregar libro', 'Eliminar libros', 'Prestamo libro','Salir']
+                choices: ['Agregar libro', 'Listar libros', 'Prestamo libro', 'Salir']
             }
         ])
         .then(opcionMenu => {
@@ -32,13 +32,13 @@ function start() {
                                 autor: respuestasNuevoLibro.Autor,
                                 genero: respuestasNuevoLibro.Genero
                             };
-                            agregar(libros, libroNuevo);
+                            agregarLibro(libros, libroNuevo);
                             console.log('Libro ingresado con exito.!');
                             start();
                         });
                     break;
-                case 'Eliminar libros':
-                    console.log('3');
+                case 'Listar libros':
+                    listarLibros();
                     break;
                 case 'Prestamo libro':
                     console.log('4');
