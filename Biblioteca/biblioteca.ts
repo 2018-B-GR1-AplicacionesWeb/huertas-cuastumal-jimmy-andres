@@ -1,9 +1,6 @@
-//import * as inquirer from 'inquirer';
-
-//var inquirer = require("inquirer");
 
 declare var require;
-const inquirer = require('inquirer');
+//const inquirer = require('inquirer');
 const fs = require('fs');
 
 declare var Promise:any;
@@ -62,11 +59,6 @@ export const agregarLibro = (arreglosLibros, libroNuevo) =>{
                 .then(
                     (contenidoArchivo)=>{
                         return escrituraArchivoLibros(contenidoArchivo,datosLibro);
-                    }
-                )
-                .then(
-                    (contenidoActualizado)=>{
-                        console.log('Contenido completo: \n', contenidoActualizado);
                     }
                 )
         }

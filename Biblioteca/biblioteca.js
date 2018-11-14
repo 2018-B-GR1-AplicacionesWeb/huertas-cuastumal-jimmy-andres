@@ -1,7 +1,6 @@
 "use strict";
-//import * as inquirer from 'inquirer';
 exports.__esModule = true;
-var inquirer = require('inquirer');
+//const inquirer = require('inquirer');
 var fs = require('fs');
 exports.libros = [];
 var libroEjemplo = {
@@ -40,9 +39,6 @@ exports.agregarLibro = function (arreglosLibros, libroNuevo) {
         exports.lecturaArchivoLibros
             .then(function (contenidoArchivo) {
             return escrituraArchivoLibros(contenidoArchivo, datosLibro);
-        })
-            .then(function (contenidoActualizado) {
-            console.log('Contenido completo: \n', contenidoActualizado);
         });
     });
 };

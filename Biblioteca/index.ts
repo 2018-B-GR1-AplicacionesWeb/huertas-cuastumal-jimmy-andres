@@ -1,9 +1,11 @@
-//import {agregarLibro, libros} from "./biblioteca";
 
 import {agregarLibro, lecturaArchivoLibros, libroInterface, libros, listarLibros} from "./biblioteca";
+import {crearPrestamo, prestamosInterface, prestamosLibros} from "./prestamos";
 
 declare var require;
 const inquirer = require('inquirer');
+
+const fechaActual = new Date();
 
 function start() {
     inquirer
@@ -39,13 +41,30 @@ function start() {
                     break;
                 case 'Listar libros':
                     listarLibros();
+                    start();
                     break;
                 case 'Prestamo libro':
-                    console.log('4');
+                    listarLibros();
+                    //console.log('Escoja un libro de la lista');
+                    inquirer.prompt([
+                        {
+                            type: 'input', name: 'Titulo', message: 'Ingrese el tituo del Libro'}
+                    ])
+                        .then(respuestasNuevoPrestamo=> {
+                            const nuevoPrestamo: prestamosInterface = {
+                                fecha: fechaActual.getDate()+'/'+(fechaActual.getMonth()+1)+'/'+fechaActual.getFullYear(),
+                                nombreLibro: respuestasNuevoPrestamo.Titulo,
+                                fechaEntrega: fechaActual.getDate()+'/'+(fechaActual.getMonth()+2)+'/'+fechaActual.getFullYear()
+                            };
+                            crearPrestamo(prestamosLibros, nuevoPrestamo);
+                            console.log('Prestamo registrado con exito.!');
+                            start();
+                        });
                     break;
                 case 'Salir':
                     break;
             }
         });
+
 }
 start();
