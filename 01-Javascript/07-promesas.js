@@ -1,8 +1,8 @@
 const fs = require('fs');
-/*
+
 const nuevaPromesaLectura = new Promise(
     (resolve, reject) => {
-            fs.readFile('06-texto23.txt','utf-8',
+            fs.readFile('06-texto.txt','utf-8',
                 (err, contenidoArchivo)=>{
                 if (err) {
                     resolve('');
@@ -40,7 +40,7 @@ nuevaPromesaLectura
     )
     .then(
         (contenidoCompleto)=>{
-            console.log('Contenido completo', contenidoCompleto)
+            console.log('Contenido completo: \n', contenidoCompleto)
         }
     )
     .catch(
@@ -49,7 +49,7 @@ nuevaPromesaLectura
         }
     );
 
-
+/*
 function appendFile(nombreArchivo, contenidoArchivo) {
     const PromesaAppendFileLectura = new Promise(
         (resolve, reject) => {
@@ -81,7 +81,7 @@ function appendFile(nombreArchivo, contenidoArchivo) {
     };
 }
 
-appendFile('07-Promesas.txt', 'Hola');*/
+appendFile('07-Promesas.txt', 'Hola');
 
 const promesaEjercicioArchivos = (indice, string) => {  //Promesa para escritura
     return new Promise(
@@ -139,4 +139,4 @@ const funcionConPromesa = function (parametros){
             console.log(arregloRespuestas)
         }
     )
-};
+};*/
