@@ -1,15 +1,13 @@
-"use strict";
-exports.__esModule = true;
 //const inquirer = require('inquirer');
-var fs = require('fs');
-exports.libros = [];
-var libroEjemplo = {
+const fs = require('fs');
+export const libros = [];
+const libroEjemplo = {
     titulo: 'libropueba',
     autor: 'aninimo',
     genero: 'comedia'
 };
-exports.lecturaArchivoLibros = new Promise(function (resolve, reject) {
-    fs.readFile('libros.json', 'utf-8', function (err, contenidoArchivo) {
+export const lecturaArchivoLibros = new Promise((resolve, reject) => {
+    fs.readFile('libros.json', 'utf-8', (err, contenidoArchivo) => {
         if (err) {
             resolve('');
         }
@@ -18,10 +16,10 @@ exports.lecturaArchivoLibros = new Promise(function (resolve, reject) {
         }
     });
 });
-var escrituraArchivoLibros = function (contenidoLeido, datosLibro) {
-    return new Promise(function (resolve, reject) {
-        var contenido = contenidoLeido ? contenidoLeido + datosLibro : datosLibro;
-        fs.writeFile('libros.json', contenido, function (err) {
+const escrituraArchivoLibros = (contenidoLeido, datosLibro) => {
+    return new Promise((resolve, reject) => {
+        const contenido = contenidoLeido ? contenidoLeido + datosLibro : datosLibro;
+        fs.writeFile('libros.json', contenido, (err) => {
             if (err) {
                 reject(err);
             }
@@ -31,21 +29,21 @@ var escrituraArchivoLibros = function (contenidoLeido, datosLibro) {
         });
     });
 };
-exports.agregarLibro = function (arreglosLibros, libroNuevo) {
+export const agregarLibro = (arreglosLibros, libroNuevo) => {
     arreglosLibros.push(libroNuevo);
-    return new Promise(function (resolve, reject) {
-        var archivo = 'libros.json';
-        var datosLibro = '\n' + JSON.stringify(libroNuevo);
-        exports.lecturaArchivoLibros
-            .then(function (contenidoArchivo) {
+    return new Promise((resolve, reject) => {
+        const archivo = 'libros.json';
+        const datosLibro = '\n' + JSON.stringify(libroNuevo);
+        lecturaArchivoLibros
+            .then((contenidoArchivo) => {
             return escrituraArchivoLibros(contenidoArchivo, datosLibro);
         });
     });
 };
-exports.listarLibros = function () {
-    return new Promise(function (resolve, reject) {
-        exports.lecturaArchivoLibros
-            .then(function (contenidoArchivo) {
+export const listarLibros = () => {
+    return new Promise((resolve, reject) => {
+        lecturaArchivoLibros
+            .then((contenidoArchivo) => {
             console.log('\n*****Libros*****\n', contenidoArchivo);
         });
     });
