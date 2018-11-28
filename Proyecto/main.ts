@@ -11,8 +11,8 @@ const preguntasMenuPrincipal = {
     message: 'Que quieres hacer',
     choices: [
         'Agregar Libro',
-        'Borrar Libro',
         'Buscar Libro',
+        'Borrar Libro',
         'Actualizar Libro',
     ]
 };
@@ -39,6 +39,23 @@ const  preguntaBuscarLibroPorNombre = {
     name: 'nombreABuscar',
     message: 'Ingrese el nombre del libro a buscar'
 };
+const  preguntaBorrarLibroPorNombre = {
+    type: 'input',
+    name: 'nombreABorrar',
+    message: 'Ingrese el nombre del libro a borrar'
+};
+const preguntasActualizarLibro = [
+    {
+        type: 'input',
+        name: 'nombreActual',
+        message: 'Nombre del libro a cabiar: '
+    },
+    {
+        type: 'input',
+        name: 'nuevoNombre',
+        message: 'Ingrese en nuevo nombre: '
+    }
+];
 
 function main() {
     console.log('ok');
@@ -84,6 +101,27 @@ function main() {
                                         }
                                     )
                                 );
+                        case 'Borrar Libro':
+                            return preguntarLibroABorrarPorNombre()
+                                .pipe(
+                                    map(
+                                        (nombreLibro) => {
+                                            respuesta.nombreLibro = nombreLibro.nombreABorrar;
+                                            return respuesta;
+                                        }
+                                    )
+                                );
+                        case 'Actualizar Libro':
+                            return preguntarLibroAActualizarPorNombre()
+                                .pipe(
+                                    map(
+                                        (nombreLibro) => {
+                                            respuesta.nombreLibro = nombreLibro.nombreActual;
+                                            respuesta.nuevoNombre = nombreLibro.nuevoNombre;
+                                            return respuesta;
+                                        }
+                                    )
+                                );
                         default:
                             return 'no entro';
                     }
@@ -92,19 +130,28 @@ function main() {
             map(
                 (respuesta: RespuestaUsuario) => {
                     console.log('ejecutando');
-                        switch(respuesta.respuestaUsuario.opcionMenu){
-                            case 'Agregar Libro':
-                                const libroNuevo = respuesta.libro;
-                                respuesta.respuestaBDD.bdd.libros.push(libroNuevo);
-                                return respuesta;
-                            case 'Buscar Libro':
-                                const nombreLibro = respuesta.nombreLibro;
+                    switch(respuesta.respuestaUsuario.opcionMenu){
+                        case 'Agregar Libro':
+                            const libroNuevo = respuesta.libro;
+                            respuesta.respuestaBDD.bdd.libros.push(libroNuevo);
+                            return respuesta;
 
-                                buscarPorNombre(nombreLibro);
-                                return respuesta;
+                        case 'Buscar Libro':
+                            const nombreLibro = respuesta.nombreLibro;
+                            buscarPorNombre(nombreLibro);
+                            return respuesta;
+                        case 'Borrar Libro':
+                            const nombreBorrar = respuesta.nombreLibro;
+                            borrarLibro(nombreBorrar);
+                            return respuesta;
 
+                        case 'Actualizar Libro':
+                            const nombreActual = respuesta.nombreLibro;
+                            const nuevoNombre = respuesta.nuevoNombre;
+                            editarLibro(nombreActual,nuevoNombre);
+                            return respuesta;
 
-                        }
+                    }
                 }
             ),
             mergeMap(
@@ -142,7 +189,7 @@ function inicializarBase() {
                 }
             )
         )
-    ;
+        ;
 }
 function preguntarMenuPrincipal() {
     return rxjs.from(inquirer.prompt(preguntasMenuPrincipal));
@@ -152,6 +199,12 @@ function preguntarDatosLibro() {
 }
 function preguntarLibroABuscarPorNombre() {
     return rxjs.from(inquirer.prompt(preguntaBuscarLibroPorNombre));
+}
+function preguntarLibroABorrarPorNombre() {
+    return rxjs.from(inquirer.prompt(preguntaBorrarLibroPorNombre));
+}
+function preguntarLibroAActualizarPorNombre() {
+    return rxjs.from(inquirer.prompt(preguntasActualizarLibro))
 }
 function leerBDD(){
     return new Promise(
@@ -227,30 +280,6 @@ function guardarBase(bdd: BaseDeDatos) {
     );
 }
 
-function buscarLibroPorNombre(nombre) {
-    return new Promise(
-        (resolve, reject) => {
-            fs.readFile('bddlibros.json', 'utf-8',
-                (err, contenido) => {
-                    if (err) {
-                        reject({mensaje: 'Error leyendo'});
-                    } else {
-                        const bdd = JSON.parse(contenido);
-
-                        const respuestaFind = bdd.libros
-                            .find(
-                                (libro) => {
-                                    return libro.nombre === nombre;
-                                }
-                            );
-
-                        resolve(respuestaFind);
-                    }
-                });
-        }
-    );
-}
-
 function buscarPorNombre(nombre) {
     fs.readFile('bddlibros.json', 'utf-8',
         (err, contenido) => {
@@ -259,8 +288,8 @@ function buscarPorNombre(nombre) {
             } else {
                 const base = JSON.parse(contenido);
                 const respuestaFind = base.libros.
-                    find((libro) => {
-                    return libro.nombre === nombre;
+                find((libro) => {
+                        return libro.nombre === nombre;
                     }
                 );
                 console.log(respuestaFind);
@@ -269,9 +298,77 @@ function buscarPorNombre(nombre) {
             }
         }
     );
-
 }
 
+function editarLibro(nombre, nuevoNombre) {
+    return new Promise(
+        (resolve, reject) => {
+            fs.readFile('bddlibros.json', 'utf-8',
+                (err, contenido) => {
+                    if (err) {
+                        reject({mensaje: 'Error leyendo'});
+                    } else {
+                        const base = JSON.parse(contenido);
+                        const indiceLibro = base.libros
+                            .findIndex(
+                                (libro) => {
+                                    return libro.nombre === nombre;
+                                }
+                            );
+
+                        base.libros[indiceLibro].nombre =nuevoNombre;
+
+                        fs.writeFile(
+                            'bddlibros.json',
+                            JSON.stringify(base),
+                            (err) => {
+                                if (err) {
+                                    reject(err);
+                                } else {
+                                    resolve({mensaje: 'Libro Editado'});
+                                }
+                            }
+                        );
+                    }
+                });
+        }
+    );
+}
+
+function borrarLibro(nombre) {
+    return new Promise(
+        (resolve, reject) => {
+            fs.readFile('bddlibros.json', 'utf-8',
+                (err, contenido) => {
+                    if (err) {
+                        reject({mensaje: 'Error leyendo'});
+                    } else {
+                        const base = JSON.parse(contenido);
+                        const indiceLibro = base.libros
+                            .findIndex(
+                                (libro) => {
+                                    return libro.nombre === nombre;
+                                }
+                            );
+
+                        base.libros.splice([indiceLibro],1);
+
+                        fs.writeFile(
+                            'bddlibros.json',
+                            JSON.stringify(base),
+                            (err) => {
+                                if (err) {
+                                    reject(err);
+                                } else {
+                                    resolve({mensaje: 'Libro Editado'});
+                                }
+                            }
+                        );
+                    }
+                });
+        }
+    );
+}
 interface BaseDeDatos {
     libros: Libro [];
 }
@@ -287,12 +384,13 @@ interface Libro {
 }
 
 interface OpcionesPreguntaMenuPrincipal{
-    opcionMenu: 'Agregar Libro' | 'Borrar Libro' | 'Buscar Libro' | 'Actualizar Libro'
+    opcionMenu: 'Agregar Libro' | 'Buscar Libro' | 'Borrar Libro' | 'Actualizar Libro'
 }
 
 interface RespuestaUsuario {
     respuestaUsuario: OpcionesPreguntaMenuPrincipal,
     respuestaBDD: RespuestaBDD,
     libro?: Libro,
-    nombreLibro : string
+    nombreLibro? : string,
+    nuevoNombre?: string
 }
