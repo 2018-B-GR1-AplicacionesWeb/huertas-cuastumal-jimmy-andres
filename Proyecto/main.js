@@ -31,6 +31,11 @@ const preguntasAgregarLibro = [
         message: 'Genero: '
     },
 ];
+const preguntaBuscarLibroPorNombre = {
+    type: 'input',
+    name: 'nombreABuscar',
+    message: 'Ingrese el nombre del libro a buscar'
+};
 function main() {
     console.log('ok');
     inicializarBase()
@@ -51,6 +56,12 @@ function main() {
                     respuesta.libro = libro;
                     return respuesta;
                 }));
+            case "Buscar Libro":
+                return preguntarLibroABuscarPorNombre()
+                    .pipe(map((nombreLibro) => {
+                    respuesta.nombreLibro = nombreLibro.nombreABuscar;
+                    return respuesta;
+                }));
             default:
                 return 'no entro';
         }
@@ -61,6 +72,10 @@ function main() {
                 const libroNuevo = respuesta.libro;
                 respuesta.respuestaBDD.bdd.libros.push(libroNuevo);
                 return respuesta;
+            case 'Buscar Libro':
+                const nombreLibro = respuesta.nombreLibro;
+                buscarPorNombre(nombreLibro);
+                return respuesta;
         }
     }), mergeMap((respuesta) => {
         return guardarBase(respuesta.respuestaBDD.bdd);
@@ -70,7 +85,7 @@ function main() {
         console.log(error);
     }, () => {
         console.log('Completado');
-        //main();
+        main();
     });
 }
 function inicializarBase() {
@@ -92,6 +107,9 @@ function preguntarMenuPrincipal() {
 }
 function preguntarDatosLibro() {
     return rxjs.from(inquirer.prompt(preguntasAgregarLibro));
+}
+function preguntarLibroABuscarPorNombre() {
+    return rxjs.from(inquirer.prompt(preguntaBuscarLibroPorNombre));
 }
 function leerBDD() {
     return new Promise((resolve) => {
@@ -146,5 +164,38 @@ function guardarBase(bdd) {
                 });
             }
         });
+    });
+}
+function buscarLibroPorNombre(nombre) {
+    return new Promise((resolve, reject) => {
+        fs.readFile('bddlibros.json', 'utf-8', (err, contenido) => {
+            if (err) {
+                reject({ mensaje: 'Error leyendo' });
+            }
+            else {
+                const bdd = JSON.parse(contenido);
+                const respuestaFind = bdd.libros
+                    .find((libro) => {
+                    return libro.nombre === nombre;
+                });
+                resolve(respuestaFind);
+            }
+        });
+    });
+}
+function buscarPorNombre(nombre) {
+    fs.readFile('bddlibros.json', 'utf-8', (err, contenido) => {
+        if (err) {
+            err({ mensaje: 'Error leyendo' });
+        }
+        else {
+            const base = JSON.parse(contenido);
+            const respuestaFind = base.libros.
+                find((libro) => {
+                return libro.nombre === nombre;
+            });
+            console.log(respuestaFind);
+            return respuestaFind;
+        }
     });
 }
