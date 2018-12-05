@@ -181,8 +181,7 @@ function crearBDD() {
             if (err) {
                 reject({
                     mensaje: 'Error creando Base',
-                    erro
-                    r: 500
+                    error: 500
                 });
             }
             else {

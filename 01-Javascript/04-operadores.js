@@ -54,7 +54,7 @@ const elevarAlCuadrado = (numero) => numero * numero;
 const elevarAlCuadradoV2 = numero => numero * numero;
 
 const arregloDeNombresDos = ['E', 'F', 'G', 'H'];
-const resultado = arregloDeNombres
+const resultado = arregloDeNombresDos
     .map(// mutar cada elemnto del arreglo
         valorActual => {
             return valorActual + '.';
