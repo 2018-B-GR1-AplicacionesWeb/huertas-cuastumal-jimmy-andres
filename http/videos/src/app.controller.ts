@@ -13,7 +13,7 @@ import {
 import {AppService} from './app.service';
 import {Observable, of} from "rxjs";
 import {Request, Response} from "express";
-import {NoticiaService} from "./noticia.service";
+import {NoticiaService} from "./noticia/noticia.service";
 
 @Controller()  //decoradores
 // Controller('usuario')
