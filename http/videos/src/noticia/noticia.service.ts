@@ -1,5 +1,9 @@
 import {Injectable} from "@nestjs/common";
 import {Noticia} from "../app.controller";
+import {NoticiaEntity} from "./noticia-entity";
+import {FindManyOptions, Repository} from "typeorm";
+import {InjectRepository} from"@nestjs/typeorm";
+
 
 @Injectable()
 export class NoticiaService {
@@ -26,47 +30,38 @@ export class NoticiaService {
         }
     ];
     numeroRegistro = 5;
+    constructor(
+        @InjectRepository(NoticiaEntity)
+    private readonly _noticiaRepository: Repository<NoticiaEntity>
 
-    crear(noticia: Noticia): Noticia {
-        noticia.id = this.numeroRegistro;
-        this.numeroRegistro++;
-        this.arreglo.push(noticia);
-        return noticia;
+    ){}
+    buscar(parametrosBusqueda?: FindManyOptions<NoticiaEntity>)
+        : Promise<NoticiaEntity[]> {
+        return this._noticiaRepository.find(parametrosBusqueda)
     }
 
-    eliminar(idNoticia: number): Noticia {
-        const indiceNoticia = this.arreglo
-            .findIndex(
-                (noticia) => {
-                    return noticia.id === idNoticia
-                }
-            );
-        const registroEliminado = JSON.parse(JSON.stringify(this.arreglo[indiceNoticia]));
-        this.arreglo.splice(indiceNoticia, 1);
+    crear(noticia: Noticia):Promise<NoticiaEntity> {
 
-        return registroEliminado;
+        const noticiaEntity: NoticiaEntity = this._noticiaRepository.create(noticia);
+
+        return this._noticiaRepository.save(noticiaEntity)
     }
 
-    actualizar(idNoticia: number, nuevaNoticia: Noticia): Noticia {
-        const indiceNoticia = this.arreglo
-            .findIndex(
-                (noticia) => {
-                    return noticia.id === idNoticia
-                }
-            );
-        this.arreglo[indiceNoticia] = nuevaNoticia;
-
-        return this.arreglo[indiceNoticia]
+    eliminar(idNoticia: number): Promise<NoticiaEntity>{
+       const noticiaAEliminar: NoticiaEntity = this._noticiaRepository
+           .create({
+           id: idNoticia
+       });
+       return this._noticiaRepository.remove(noticiaAEliminar);
     }
 
-    buscarPorId(idNoticia: number): Noticia {
-        const indiceNoticia = this.arreglo
-            .findIndex(
-                (noticia) => {
-                    return noticia.id === idNoticia
-                }
-            );
-        return this.arreglo[indiceNoticia];
+    actualizar(nuevaNoticia: Noticia): Promise<NoticiaEntity> {
+        const noticiaEntity: NoticiaEntity = this._noticiaRepository.create(nuevaNoticia);
+        return this._noticiaRepository.save(noticiaEntity)
+    }
+
+    buscarPorId(idNoticia: number): Promise<NoticiaEntity>{
+        return this._noticiaRepository.findOne(idNoticia);
     }
 
 }

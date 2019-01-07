@@ -6,7 +6,7 @@
 <p><%= estaCreando ? 'Cree':'Actualice' %> una noticia</p>
 
 <!-- emmet -->
-<form action="/<%= estaCreando ? 'crear' : 'actualizar' %>-noticia/<%= estaCreando ? '' : noticia.id %>"
+<form action="/noticia/<%= estaCreando ? 'crear' : 'actualizar' %>-noticia/<%= estaCreando ? '' : noticia.id %>"
       method="POST">
 
     <div>
@@ -32,6 +32,6 @@
 
 </form>
 
-<a href="/inicio">
+<a href="/noticia/inicio">
     <button>Regresar</button>
 </a>
