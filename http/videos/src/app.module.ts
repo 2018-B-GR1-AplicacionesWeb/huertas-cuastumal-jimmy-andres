@@ -4,6 +4,7 @@ import {AppService} from './app.service';
 import {NoticiaService} from "./noticia/noticia.service";
 import {TypeOrmModule} from '@nestjs/typeorm'
 import {NoticiaEntity} from "./noticia/noticia-entity";
+import {NoticiaModule} from "./noticia/noticia.module";
 
 
 @Module({
@@ -12,21 +13,24 @@ import {NoticiaEntity} from "./noticia/noticia-entity";
             {
                 type:'mysql',
                 host:'localhost',
-                port: 32773,
+                port: 32769,
                 database:'noticias',
                 username: 'andreshcl',
                 password: '12345',
                 synchronize: true,
+                dropSchema: true,
                 entities: [
                     NoticiaEntity
                 ]
             }
-        )
+        ),
+        NoticiaModule
     ],  // MODULOS
-    controllers: [AppController],  // Controllers
+    controllers: [
+        AppController
+    ],  // Controllers
     providers: [
         AppService,
-        NoticiaService
     ], // Servicios
 })
 export class AppModule {

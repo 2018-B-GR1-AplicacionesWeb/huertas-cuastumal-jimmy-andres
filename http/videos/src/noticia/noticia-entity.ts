@@ -1,9 +1,23 @@
-import {Column} from "typeorm";
+import {Column, Entity, Index, PrimaryGeneratedColumn} from "typeorm";
 
+@Entity('noticia')
 export class NoticiaEntity {
-    @Column()
+
+    @PrimaryGeneratedColumn()
+    id: number;
+
+    @Index()
+    @Column({
+        name:'titulo_noticia',
+        type: 'varchar',
+        length: 50
+    })
     titulo:string;
-    @Column()
+    @Column({
+        name:'descripcion_noticia',
+        type: 'text',
+        nullable: true
+    })
     descripcion:string;
 
 }
