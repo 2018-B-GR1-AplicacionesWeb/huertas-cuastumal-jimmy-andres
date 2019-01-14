@@ -3,19 +3,20 @@
 import {Body, Controller, Get, Param, Post, Query, Res} from "@nestjs/common";
 import {Noticia} from "../app.controller";
 import {NoticiaService} from "./noticia.service";
-
+import {NoticiaEntity} from "./noticia-entity";
+import {FindManyOptions, Like} from "typeorm";
 
 @Controller('noticia')
 export class NoticiaController {
 
-    constructor(private readonly _noticiaService: NoticiaService){
+    constructor(private readonly _noticiaService: NoticiaService) {
 
     }
 
     @Get('inicio')
     async inicio(
         @Res() response,
-        @Query() consulta,
+        @Query('busqueda') busqueda: string,
         @Query('accion') accion: string,
         @Query('titulo') titulo: string
     ) {
@@ -29,7 +30,28 @@ export class NoticiaController {
             }
         }
 
-        const noticias = await this._noticiaService.buscar();
+        let noticias: NoticiaEntity[];
+
+        if (busqueda) {
+
+            const consulta: FindManyOptions<NoticiaEntity> = {
+                where: [
+                    {
+                        titulo: Like(`%${busqueda}%`)
+                    },
+                    {
+                        descripcion: Like(`%${busqueda}%`)
+                    }
+                ]
+            };
+
+            noticias = await this._noticiaService.buscar(consulta);
+
+        } else {
+            noticias = await this._noticiaService.buscar();
+        }
+
+
         response.render(
             'inicio',
             {
@@ -48,6 +70,7 @@ export class NoticiaController {
     ) {
 
         const noticia = await this._noticiaService.buscarPorId(+idNoticia);
+
         await this._noticiaService.eliminar(Number(idNoticia));
 
         const parametrosConsulta = `?accion=borrar&titulo=${
@@ -71,7 +94,8 @@ export class NoticiaController {
         @Res() response,
         @Body() noticia: Noticia
     ) {
-        await this._noticiaService.crear(noticia);
+        const respuesta = await this._noticiaService.crear(noticia);
+        console.log(respuesta);
 
         response.redirect(
             '/noticia/inicio'
@@ -112,3 +136,9 @@ export class NoticiaController {
 
     }
 }
+
+
+
+
+
+
