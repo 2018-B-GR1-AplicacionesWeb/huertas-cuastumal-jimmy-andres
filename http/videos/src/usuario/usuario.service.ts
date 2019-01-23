@@ -15,7 +15,7 @@ export class UsuarioService{
     }
 
     async autenticar(username: string,
-               password: string ):Promise<boolean>{
+                     password: string ):Promise<boolean>{
         const consulta: FindOneOptions<UsuarioEntity> = {
             where:{
                 username: username,
