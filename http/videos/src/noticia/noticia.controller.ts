@@ -1,10 +1,12 @@
 // noticia.controller.ts
 
-import {Body, Controller, Get, Param, Post, Query, Res} from "@nestjs/common";
+import {BadRequestException, Body, Controller, Get, Param, Post, Query, Res} from "@nestjs/common";
 import {Noticia} from "../app.controller";
 import {NoticiaService} from "./noticia.service";
 import {NoticiaEntity} from "./noticia-entity";
 import {FindManyOptions, Like} from "typeorm";
+import {CreateNoticiaDto} from "./dto/create-noticia.dto";
+import {validate, ValidationError} from "class-validator";
 
 @Controller('noticia')
 export class NoticiaController {
@@ -22,11 +24,24 @@ export class NoticiaController {
     ) {
 
         let mensaje = undefined;
+        let clase = undefined;
 
         if (accion && titulo) {
             switch (accion) {
                 case 'borrar':
-                    mensaje = `Registro ${titulo} eliminado`;
+                    mensaje = `Registro ${titulo} eliminado.`;
+                    clase = 'alert alert-danger';
+                    break;
+
+                case 'actualizar':
+                    mensaje = `Registro ${titulo} actualizado.`;
+                    clase = 'alert alert-info';
+                    break;
+
+                case 'crear':
+                    mensaje = `Registro ${titulo} creado.`;
+                    clase = 'alert alert-success';
+                    break;
             }
         }
 
@@ -58,7 +73,8 @@ export class NoticiaController {
                 usuario: 'Adrian',
                 arreglo: noticias, // AQUI!
                 booleano: false,
-                mensaje: mensaje
+                mensaje: mensaje,
+                clase: clase
             }
         );
     }
@@ -94,12 +110,34 @@ export class NoticiaController {
         @Res() response,
         @Body() noticia: Noticia
     ) {
-        const respuesta = await this._noticiaService.crear(noticia);
-        console.log(respuesta);
 
-        response.redirect(
-            '/noticia/inicio'
-        )
+        const objetoValidacionNoticia = new CreateNoticiaDto();
+
+        objetoValidacionNoticia.titulo = noticia.titulo;
+        objetoValidacionNoticia.descripcion = noticia.descripcion;
+
+        const errores: ValidationError[] =
+            await validate(objetoValidacionNoticia);
+
+        const hayErrores = errores.length>0;
+
+        if(hayErrores){
+            console.error(errores);
+            //redirect crear noticia, y
+            //en crear noticia deberian mostrar mensajes
+            //como en la pantalla de Inicio
+
+            throw new BadRequestException({mensaje:'Error de validacion'})
+        }else{
+            const respuesta = await this._noticiaService.crear(noticia);
+
+            const parametrosConsulta = `?accion=crear&titulo=${noticia.titulo}`;
+
+            response.redirect(
+                '/noticia/inicio' + parametrosConsulta
+            )
+        }
+
     }
 
     @Get('actualizar-noticia/:idNoticia')
@@ -132,13 +170,9 @@ export class NoticiaController {
         noticia.id = +idNoticia;
         await this._noticiaService.actualizar(noticia);
 
-        response.redirect('/noticia/inicio');
+        const parametrosConsulta = `?accion=actualizar&titulo=${noticia.titulo}`;
+
+        response.redirect('/noticia/inicio' + parametrosConsulta);
 
     }
 }
-
-
-
-
-
-
