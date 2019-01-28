@@ -101,7 +101,10 @@ export class NoticiaController {
         @Res() response
     ) {
         response.render(
-            'crear-noticia'
+            'crear-noticia',
+            {
+                titulo:'Crear Noticia'
+            }
         )
     }
 

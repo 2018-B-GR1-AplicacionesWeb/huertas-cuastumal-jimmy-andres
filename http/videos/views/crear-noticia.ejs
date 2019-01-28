@@ -1,37 +1,56 @@
-<% const estaCreando = typeof noticia === "undefined"%>
 
 
-<h1> <%= estaCreando ? 'Crear':'Actualizar' %> noticia</h1>
+<%- include('header',{titulo:titulo})%>
 
-<p><%= estaCreando ? 'Cree':'Actualice' %> una noticia</p>
 
-<!-- emmet -->
-<form action="/noticia/<%= estaCreando ? 'crear' : 'actualizar' %>-noticia/<%= estaCreando ? '' : noticia.id %>"
-      method="POST">
+<div class="container">
 
-    <div>
-        <label for="titulo">Titulo</label>
-        <input id="titulo"
-               name="titulo"
-               type="text"
-               value="<%= estaCreando ? '' : noticia.titulo %>"
-        >
-    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div>
+                <% const estaCreando = typeof noticia === "undefined"%>
 
-    <div>
-        <label for="descripcion">Descripcion</label>
-        <textarea id="descripcion"
-                  name="descripcion"
-                  cols="30" rows="4">
+                <h1> <%= estaCreando ? 'Crear':'Actualizar' %> noticia</h1>
+
+                <p><%= estaCreando ? 'Cree':'Actualice' %> una noticia</p>
+
+                <!-- emmet -->
+                <form action="/noticia/<%= estaCreando ? 'crear' : 'actualizar' %>-noticia/<%= estaCreando ? '' : noticia.id %>"
+                      method="POST">
+
+                    <div>
+                        <label for="titulo">Titulo</label>
+                        <input id="titulo"
+                               name="titulo"
+                               type="text"
+                               value="<%= estaCreando ? '' : noticia.titulo %>"
+                        >
+                    </div>
+
+                    <div>
+                        <label for="descripcion">Descripcion</label>
+                        <textarea id="descripcion"
+                                  name="descripcion"
+                                  cols="30" rows="4">
             <%= estaCreando ? '' : noticia.descripcion %>
 
         </textarea>
+                    </div>
+
+                    <button><%= estaCreando ? 'Crear' : 'Actualizar' %> noticia</button>
+
+                </form>
+
+                <a href="/noticia/inicio">
+                    <button>Regresar</button>
+                </a>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <br>
+            <%- include('templates/perfil-usuario',{imagen:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQRgcSVtjyC9jdFLpfphYBth5o8BtZcxjgyAKWQx_GiLG8NTsnjRA',nombre:'Andres Huertas',correo:'andres@epn.edu.ec'})%>
+        </div>
     </div>
-
-    <button><%= estaCreando ? 'Crear' : 'Actualizar' %> noticia</button>
-
-</form>
-
-<a href="/noticia/inicio">
-    <button>Regresar</button>
-</a>
+</div>
+<%- include('librerias')%>
+<%- include('footer')%>
