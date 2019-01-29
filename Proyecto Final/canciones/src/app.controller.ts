@@ -9,10 +9,7 @@ export class AppController {
 
     }
 
-    @Get('adiosMundo') // url
-    adiosMundo(): string {
-        return 'Adios mundo'
-    }
+
     @Get('login')
     mostrarLogin(
         @Res() res
@@ -31,10 +28,17 @@ export class AppController {
             .autenticar(username, password);
 
         if(respuesta){
-            res.send('ok');
-            //res.redirect('adiosMundo')
+            //res.send('ok');
+            res.redirect('menu')
         }else{
             res.redirect('login');
         }
+    }
+
+    @Get('menu') // url
+    mostrarMenu(
+        @Res() res
+    ){
+        res.render('menu')
     }
 }
