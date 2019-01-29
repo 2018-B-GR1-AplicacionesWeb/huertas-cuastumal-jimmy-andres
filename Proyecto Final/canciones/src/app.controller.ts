@@ -5,8 +5,14 @@ import {UsuarioService} from "./usuario/usuario.service";
 @Controller()
 export class AppController {
     constructor(private readonly appService: AppService,
-                private readonly _usuarioService: UsuarioService) {}
+                private readonly _usuarioService: UsuarioService) {
 
+    }
+
+    @Get('adiosMundo') // url
+    adiosMundo(): string {
+        return 'Adios mundo'
+    }
     @Get('login')
     mostrarLogin(
         @Res() res
@@ -14,22 +20,21 @@ export class AppController {
         res.render('login')
     }
 
-        @Post('login')
-        @HttpCode(200)
-        async ejecutarLogin(
-            @Body('username') username:string,
-            @Body('password') password:string,
-            @Res() res,
-            @Session() sesion
-        ){
-            const respuesta = await this._usuarioService
-                .autenticar(username, password);
-            console.log(sesion);
-            if(respuesta){
-                sesion.usuario = username;
-                res.send('ok');
-            }else{
-                res.redirect('login');
-            }
+    @Post('login')
+    @HttpCode(200)
+    async ejecutarLogin(
+        @Body('username') username:string,
+        @Body('password') password:string,
+        @Res() res
+    ){
+        const respuesta = await this._usuarioService
+            .autenticar(username, password);
+
+        if(respuesta){
+            res.send('ok');
+            //res.redirect('adiosMundo')
+        }else{
+            res.redirect('login');
         }
+    }
 }
